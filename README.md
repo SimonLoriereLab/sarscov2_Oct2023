@@ -11,6 +11,17 @@ Rhe file `run.sh` indicates the commands to run.
 
 ## Inferring the tree
 
+First, modify the `gofasta.config` file, especially the following attributes to adapt to the local hpc environment
+- `fastqueue = 'common,dedicated'`
+- `fastqos= '--qos=fast'`
+- `normalqueue = 'cnrvir'`
+- `normalqos = '-A cnrvir'`
+- `longqueue = 'cnrvir'`
+- `longqos = '-A cnrvir'`
+- `bigmemqueue = 'common'`
+- `executor`
+
+The run nextflow:
 ```
 nextflow run gofasta.nf -c gofasta.config
 ```
