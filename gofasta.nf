@@ -272,33 +272,43 @@ process ComputeSupports {
 }
 
 workflow {
-   query = file("data/gisaid_hcov-19_2023_09_07_07.fasta")
+   // This file should be downloaded from GISAID
    gisaid = file("data/sequences_fasta_2023_09_16.tar.xz")
    ba286names = file("data/BA.2.86_all.txt")
    contextnames = file("data/context.txt")
-   
+ 
+   // Download nextclade reference data
    ncref = getRefData()
+   // Filter bad quality sequences + split in batches of 100000
    splitgisaid = filterGISAID(gisaid, ba286names, contextnames)
+   // Align the sequences against reference using nextaliagn
    galign = alignGISAID(ncref, splitgisaid[0].flatten())
+   // Align the BA286 sequences against the reference using nextalign
    ba286align = alignBA286(ncref, splitgisaid[1])
+   // Align the Contextual sequences against the reference using nextalign
    contextalign = alignContext(ncref, splitgisaid[2])
-
+   // Annotation of all the sequences with pangolin
    Pangolin(splitgisaid[0].flatten().mix(splitgisaid[1]).mix(splitgisaid[2])).collectFile(name: "gisaid_pangolin.tsv").subscribe{
    it -> it.copyTo("results/")
    }
-
+   // concatenaate GISAID filtered + context 
    db = ConcatDB(galign.collect(), contextalign)
+   // Get the closest sequences from ba286 in the database
    closest = GoFasta(db, ba286align)
+   // We take the unique closest sequence names
    unique = UniqueClosest(closest)
-   
+   // And extract their sequences from the full dataset
    uniquesequences=ExtractSequences(db,unique)
-
+   // We mask some positions of the alignment
    align = mask(uniquesequences.mix(ba286align).mix(contextalign)).collect()
+   // We build bootstrap alignments
    bootaligns = BootAligns(align)
+   // We infer bootstrap trees
    boottrees  = BootTrees(bootaligns.flatten())
    boottreecoll = boottrees.collectFile(name: 'boottrees.treefile')
    boottreecoll.subscribe{f -> f.copyTo('results/boottrees/')}
+   // We infer the reference phylogeny
    reftree = Phylogeny(align)
-
+   // We compute bootstrap supports
    ComputeSupports(reftree, boottreecoll)
 }
