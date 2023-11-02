@@ -28,15 +28,15 @@ nextflow run gofasta.nf -c gofasta.config
 
 It will produce the output files in the `results` folder, in particular:
 
-- ba286.aligned.fasta_closest.txt: The name of the closest sequences to BA.2.86 queries
-- ba286.aligned.fasta_closest_unique_sequences.fasta.gz: The sequences of the closest sequences to BA.2.86 queries
-- ba286.aligned.fasta_closest_unique_sequences.fasta_masked.fasta.gz: The masked sequences of the closest sequences to BA.2.86 queries
-- context.aligned.fasta_masked.fasta.gz: The masked sequences of the contextual samples
+- context.aligned.fasta_masked.fasta.gz: The masked sequences of the global contextual samples
 - gisaid_pangolin.tsv: Pangolin annotation of all the sequences
 - bootaligns/*: Bootstrap alignments
 - boottrees/*: Bootstrap trees
 - align.treefile: Phylogenetic tree
 - align_fbp.treefile: Phylogenetic tree with bootstrap supports
+- ba286.aligned.fasta_closest.txt: The name of the closest sequences to BA.2.86 queries
+- ba286.aligned.fasta_closest_unique_sequences.fasta.gz: The sequences of the closest sequences to BA.2.86 queries
+- ba286.aligned.fasta_closest_unique_sequences.fasta_masked.fasta.gz: The masked sequences of the closest sequences to BA.2.86 queries
 
 ## Producing the figures
 
