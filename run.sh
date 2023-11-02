@@ -1,3 +1,4 @@
+# Infering the tree from contextual sequences + closest sequences
 nextflow run -c gofasta.config gofasta.nf
 
 # Contextual sequence IDs taken from nextstrain build global GISAID from ~18/09/2023
