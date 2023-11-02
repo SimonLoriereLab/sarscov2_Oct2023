@@ -6,9 +6,10 @@ library(data.table)
 library(versionsort)
 library("ggsci")
 
-md=fread("data/meta_shrink3.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
+md=fread("data/meta_shrink3_oct.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
 md$dates=as.Date(md$`Collection date`)
-md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2023-09-10"),]
+
+md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2023-10-07"),]
 md2023$days=as.Date(lubridate::floor_date(md2023$dates, "day"))
 md2023$weeks=as.Date(lubridate::floor_date(md2023$dates, "week"))
 md2023$months=as.Date(lubridate::floor_date(md2023$dates, "month"))
@@ -22,7 +23,7 @@ totalweekspango=md2023 %>%
 
 totalweekspangomerge = merge(totalweeks,totalweekspango,by.x="weeks",by.y="weeks")
 
-cutoff=0.02
+cutoff=0.01
 # we take the pango lineages that are at least once (one month) > cutoff 
 cutofflineages=unique(totalweekspangomerge[totalweekspangomerge$pangoofweek/totalweekspangomerge$totalofweek>cutoff,"short_pango"])
 
@@ -71,7 +72,7 @@ for (l1 in rev(levels(md2023$short_pango_clean))){
   }
 }
 
-svg(file="ba.2.86.world_dates.svg",width=20,height=10)
+svg(file="ba.2.86_oct.world_dates.svg",width=20,height=10)
 ggplot(md2023, aes(x = dates,fill=short_pango_clean,group=short_pango_clean,after_stat(count)))+
   geom_density(adjust=2, position="fill", kernel="cosine",linewidth=0) +
   #geom_text(aes(label=short_pango_clean),position = position_fill(vjust = 0.5))+
@@ -88,7 +89,7 @@ dev.off()
 ## Now the same with Only European sequences ##
 ###############################################
 
-md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2023-09-10") & grepl("Europe",md$Location),]
+md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2023-10-07") & grepl("Europe",md$Location),]
 md2023$days=as.Date(lubridate::floor_date(md2023$dates, "day"))
 md2023$weeks=as.Date(lubridate::floor_date(md2023$dates, "week"))
 md2023$months=as.Date(lubridate::floor_date(md2023$dates, "month"))
@@ -151,7 +152,7 @@ for (l1 in rev(levels(md2023$short_pango_clean))){
   }
 }
 
-svg(file="ba.2.86.europe_dates.svg",width=20,height=10)
+svg(file="ba.2.86_oct.europe_dates.svg",width=20,height=10)
 ggplot(md2023, aes(x = dates,fill=short_pango_clean,group=short_pango_clean,after_stat(count)))+
   geom_density(adjust=2, position="fill", kernel="cosine",linewidth=0) +
   #geom_text(aes(label=short_pango_clean),position = position_fill(vjust = 0.5))+
@@ -162,3 +163,9 @@ ggplot(md2023, aes(x = dates,fill=short_pango_clean,group=short_pango_clean,afte
   theme(text = element_text(size = 15,family = "sans"))+
   geom_text(data=lpos,aes(label=short_pango_clean,x=week,y=cumu),color="black",vjust=0.5,hjust=0.5)
 dev.off()
+
+
+#### Statistics for French sequences from Sept 2023
+md=fread("data/meta_shrink3_sept_fr.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
+md$dates=as.Date(md$`Collection date`)
+mdFranceSept = md[md$dates>=as.Date("2023-09-01") & md$dates<as.Date("2023-10-01") & grepl("France",md$Location),]
