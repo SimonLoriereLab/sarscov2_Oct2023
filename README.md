@@ -7,7 +7,7 @@
 
 ## General commands
 
-Rhe file `run.sh` indicates the commands to run. 
+The file `run.sh` indicates commands to run. 
 
 ## Inferring the tree
 
@@ -21,7 +21,7 @@ First, modify the `gofasta.config` file, especially the following attributes to 
 - `bigmemqueue = 'common'`
 - `executor`
 
-The run nextflow:
+Then run nextflow:
 ```
 nextflow run gofasta.nf -c gofasta.config
 ```
@@ -40,9 +40,8 @@ It will produce the output files in the `results` folder, in particular:
 
 ## Producing the figures
 
-R
+R (v4.3.0)
 ```
 > source("figures/lineageStats.R")
 > source("figures/plot_mutations.R")
 ```
-
