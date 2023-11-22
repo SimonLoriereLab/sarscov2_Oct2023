@@ -1,5 +1,6 @@
 nextflow.enable.dsl=2
 
+// Download nextclade reference datasets
 process getRefData {
 
 label 'getref'
@@ -13,6 +14,8 @@ nextclade dataset get --name 'sars-cov-2' --output-dir 'ncref'
 """
 }
 
+// Remove sequences that are <29000nt or have >1% N
+// And splits the dataset in files containing 100000 sequences
 process filterGISAID {
 
 label 'filter'
@@ -33,6 +36,7 @@ xz -d -c ${gisaid} | tar -xOvf - sequences.fasta| filterSequences.py -s - -S 100
 """
 }
 
+// Annotate input sequences using pangolin
 process Pangolin {
     label 'pangolin'
     
@@ -49,6 +53,8 @@ process Pangolin {
     """
 }
 
+// Align input sequences using nextalign and
+// reference nextclade dataset
 process alignGISAID {
 
 label 'align'
@@ -67,6 +73,8 @@ gzip ${seq.baseName}*.aligned.fasta
 """
 }
 
+// Align contextual sequences using nextalign and
+// reference nextclade dataset
 process alignContext {
 
 label 'align'
@@ -85,6 +93,8 @@ gzip context.aligned.fasta
 """
 }
 
+// Align ba286 sequences using nextalign and
+// reference nextclade dataset
 process alignBA286 {
 
 label 'align'
@@ -103,6 +113,7 @@ gzip ba286.aligned.fasta
 """
 }
 
+// Create the database containing contextual + gisaid filtered sequences
 process ConcatDB {
     
     input:
@@ -118,6 +129,8 @@ process ConcatDB {
     """
 }
 
+// Search the closest sequences from the query in the database
+// using gofasta
 process GoFasta {
     
     label 'gofasta'
@@ -138,6 +151,8 @@ process GoFasta {
     """
 }
 
+// Process the results of gofasta, and deduplicate output sequence names
+// because several query sequences can have intersecting sets of closest sequences
 process UniqueClosest {
 
     label 'uniq'
@@ -156,6 +171,7 @@ process UniqueClosest {
     """
 }
 
+// Given the name of he input sequences, retrieve their sequence in the input fasta file
 process ExtractSequences {
     
     label 'extract'
@@ -175,6 +191,7 @@ process ExtractSequences {
     """
 }
 
+// Mask specific positions of the alignment
 process mask {
    publishDir "results/", mode: 'copy'
 
@@ -195,6 +212,7 @@ process mask {
    """
 }
 
+// Generate bootstrap alignments
 process BootAligns {
     publishDir "results/bootaligns/", mode: 'copy'
 
@@ -212,6 +230,7 @@ process BootAligns {
     """
 }
 
+// Build reference tree
 process Phylogeny {
     publishDir "results/", mode: 'copy'
 
@@ -234,6 +253,7 @@ process Phylogeny {
     """
 }
 
+// Build bootstrap trees
 process BootTrees {
     publishDir "results/boottrees", mode: 'copy'
 
@@ -253,6 +273,7 @@ process BootTrees {
     """
 }
 
+// Compute bootstrap supports, given reference + bootstrap trees
 process ComputeSupports {
     publishDir "results/", mode: 'copy'
 
@@ -271,6 +292,7 @@ process ComputeSupports {
     """
 }
 
+// Full workflow
 workflow {
    // This file should be downloaded from GISAID
    gisaid = file("data/sequences_fasta_2023_09_16.tar.xz")

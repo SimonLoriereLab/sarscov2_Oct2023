@@ -10,7 +10,7 @@ from Bio import SeqIO
 from concurrent.futures import ThreadPoolExecutor
 
 #
-# This script takes an input fasta file, and outputs a fasta file without sequences having more than 5% N
+# This script takes an input fasta file, and outputs a fasta file without sequences having more than 1% N
 # Moreover it renames the sequences : spaces are replaced with --
 #
 
