@@ -6,10 +6,15 @@ library(data.table)
 library(versionsort)
 library("ggsci")
 
-md=fread("data/meta_shrink3_oct.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
+setwd("/pasteur/zeus/projets/p01/CNRVIR_bioinfoSEQ/users/flemoine/2023_09_BA.2.86")
+#md=fread("data/meta_shrink3_oct.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
+#md=fread("data/meta_shrink3_nov.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
+#md=fread("data/meta_shrink3_dec.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
+md=fread("data/meta_shrink3_jan.tsv",header=T,quote = "\"",sep="\t", stringsAsFactors=F)
+
 md$dates=as.Date(md$`Collection date`)
 
-md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2023-10-07"),]
+md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2024-01-01"),]
 md2023$days=as.Date(lubridate::floor_date(md2023$dates, "day"))
 md2023$weeks=as.Date(lubridate::floor_date(md2023$dates, "week"))
 md2023$months=as.Date(lubridate::floor_date(md2023$dates, "month"))
@@ -72,12 +77,16 @@ for (l1 in rev(levels(md2023$short_pango_clean))){
   }
 }
 
-svg(file="ba.2.86_oct.world_dates.svg",width=20,height=10)
-ggplot(md2023, aes(x = dates,fill=short_pango_clean,group=short_pango_clean,after_stat(count)))+
-  geom_density(adjust=2, position="fill", kernel="cosine",linewidth=0) +
+svg(file="ba.2.86_jan.world_dates.svg",width=20,height=10)
+md2023group=dcast(md2023,weeks+short_pango_clean~.,fun.agg = function(x){length(x)})
+colnames(md2023group)=c("Date","short_pango_clean","Counts")
+ggplot(md2023group, aes(x = Date,y=Counts,fill=short_pango_clean, group=short_pango_clean))+
+  #geom_density(adjust=4, position="fill", kernel="optcosine",linewidth=0) +
+  geom_area(position="fill",linewidth=0) +
+  #stat_smooth(geom = 'area', method = 'loess', position="fill") + 
   #geom_text(aes(label=short_pango_clean),position = position_fill(vjust = 0.5))+
   ggtitle("Prop of SARS-CoV-2 lineages per week on GISAID") + 
-  xlab("date")+
+  xlab("Date")+
   scale_fill_manual(values=palette1)+
   theme_bw()+
   theme(text = element_text(size = 15,family = "sans"))+
@@ -89,7 +98,7 @@ dev.off()
 ## Now the same with Only European sequences ##
 ###############################################
 
-md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2023-10-07") & grepl("Europe",md$Location),]
+md2023 = md[md$dates>as.Date("2023-01-01") & md$dates<as.Date("2023-11-15") & grepl("Europe",md$Location),]
 md2023$days=as.Date(lubridate::floor_date(md2023$dates, "day"))
 md2023$weeks=as.Date(lubridate::floor_date(md2023$dates, "week"))
 md2023$months=as.Date(lubridate::floor_date(md2023$dates, "month"))
@@ -152,7 +161,7 @@ for (l1 in rev(levels(md2023$short_pango_clean))){
   }
 }
 
-svg(file="ba.2.86_oct.europe_dates.svg",width=20,height=10)
+svg(file="ba.2.86_nov.europe_dates.svg",width=20,height=10)
 ggplot(md2023, aes(x = dates,fill=short_pango_clean,group=short_pango_clean,after_stat(count)))+
   geom_density(adjust=2, position="fill", kernel="cosine",linewidth=0) +
   #geom_text(aes(label=short_pango_clean),position = position_fill(vjust = 0.5))+

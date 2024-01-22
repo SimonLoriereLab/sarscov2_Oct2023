@@ -33,8 +33,13 @@ sub shrink{
     if($lin =~ /^FD\.1\.1$/ || $lin =~ /^FD\.1\.1\./){
 	$last = 5;
     }
-    if($lin =~ /^BA\.2\.86$/ || $lin =~ /^BA\.2\.86\./){
+    if($lin =~ /^BA\.2\.86$/ || $lin =~ /^BA\.2\.86\./ || $alias =~ /^B\.1\.1\.529\.2\.86$/ || $alias =~ /^B\.1\.1\.529\.2\.86\./){
+	print STDERR  $lin." ".$alias."\n";
 	$last = 5;
+    }
+    if($lin =~ /^JN\.1$/ || $lin =~ /^JN\.1\./ || $alias =~ /^B\.1\.1\.529\.2\.86\.1\.1$/ || $alias =~ /^B\.1\.1\.529\.2\.86\.1\.1\./){
+	print STDERR  $lin." ".$alias."\n";
+	$last = 7;
     }
     if($lin =~ /^B\.1\.617\.2$/ || $lin =~ /^B\.1\.617\.2\./ || $lin=~/^AY$/ || $lin=~/^AY\./){
 	$last = 3;
@@ -79,7 +84,7 @@ sub shrink{
     if($last>$#aliascols){
 	$last = $#aliascols;
     }
-    
+
     my $simpl = join(".",@aliascols[0..$last]);
     
     return $simpl;
