@@ -45,3 +45,7 @@ R (v4.3.0)
 > source("figures/lineageStats.R")
 > source("figures/plot_mutations.R")
 ```
+
+## DOI
+
+[![DOI](https://zenodo.org/badge/713460535.svg)](https://zenodo.org/doi/10.5281/zenodo.10692772)
